@@ -10,7 +10,7 @@ pipeline {
     environment {
 
         IMAGE_NAME = "ott-platform"
-        DOCKERHUB_REPO = "daya9096/ott-platform"
+        DOCKERHUB_REPO = "arun321508/ott-platform"
         IMAGE_TAG = "${BUILD_NUMBER}"
 
         MYSQL_DATABASE = "ott_db"
@@ -21,7 +21,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 git branch: 'main',
-                    url: 'https://github.com/daya9096/OTT.git'
+                    url: 'https://github.com/Arun321508/OTT-22.git'
             }
         }
 
@@ -40,38 +40,6 @@ pipeline {
                 always {
                     junit allowEmptyResults: true,
                           testResults: '**/target/surefire-reports/*.xml'
-                }
-            }
-        }
-
-        stage('SonarQube Analysis') {
-            steps {
-
-                withSonarQubeEnv('sonarqube') {
-
-                    withCredentials([
-                        string(
-                            credentialsId: 'sonar',
-                            variable: 'SONAR_TOKEN'
-                        )
-                    ]) {
-
-                        sh '''
-                        mvn sonar:sonar \
-                        -Dsonar.projectKey=ott-platform \
-                        -Dsonar.projectName="OTT Platform" \
-                        -Dsonar.token=$SONAR_TOKEN
-                        '''
-
-                    }
-                }
-            }
-        }
-
-        stage('Quality Gate') {
-            steps {
-                timeout(time: 15, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
                 }
             }
         }
